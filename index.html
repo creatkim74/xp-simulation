@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>XP Economy Simulation Dashboard</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+:root {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f5f5f4;
+  --bg-tertiary: #fafaf9;
+  --text-primary: #1c1917;
+  --text-secondary: #78716c;
+  --text-tertiary: #a8a29e;
+  --border: #e7e5e4;
+  --border-hover: #d6d3d1;
+  --accent: #534AB7;
+  --success: #16a34a;
+  --danger: #dc2626;
+  --warning: #d97706;
+  --info: #2563eb;
+  --radius: 8px;
+  --radius-lg: 12px;
+  --font: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-primary: #1c1917;
+    --bg-secondary: #292524;
+    --bg-tertiary: #1c1917;
+    --text-primary: #fafaf9;
+    --text-secondary: #a8a29e;
+    --text-tertiary: #78716c;
+    --border: #44403c;
+    --border-hover: #57534e;
+    --accent: #AFA9EC;
+    --success: #4ade80;
+    --danger: #f87171;
+    --warning: #fbbf24;
+    --info: #60a5fa;
+  }
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: var(--font);
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  line-height: 1.6;
+  min-height: 100vh;
+}
+.header {
+  background: var(--bg-primary);
+  border-bottom: 1px solid var(--border);
+  padding: 16px 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.header-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.header h1 {
+  font-size: 18px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.header h1 i { color: var(--accent); }
+.header .subtitle { font-size: 12px; color: var(--text-secondary); }
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px 24px;
+}
+.tabs {
+  display: flex;
+  gap: 0;
+  background: var(--bg-primary);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+.tab-btn {
+  flex: 1;
+  padding: 12px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-family: var(--font);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.2s;
+  border-bottom: 2px solid transparent;
+}
+.tab-btn:hover { background: var(--bg-secondary); }
+.tab-btn.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+  background: var(--bg-secondary);
+}
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+@media (max-width: 768px) {
+  .grid-2, .grid-3 { grid-template-columns: 1fr; }
+}
+
+.card {
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+}
+.card-title {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+}
+.card-title i { color: var(--accent); font-size: 18px; }
+.card-title .toggle-icon { margin-left: auto; color: var(--text-tertiary); font-size: 16px; transition: transform 0.2s; }
+
+.inp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 20px; }
+@media (max-width: 600px) { .inp-grid { grid-template-columns: 1fr; } }
+
+.inp-group { display: flex; flex-direction: column; gap: 4px; }
+.inp-group label {
+  font-size: 12px;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+.tip-btn {
+  cursor: help;
+  font-size: 10px;
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  background: #E6F1FB;
+  color: #185FA5;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  flex-shrink: 0;
+  border: none;
+  position: relative;
+}
+@media (prefers-color-scheme: dark) {
+  .tip-btn { background: #0C447C; color: #85B7EB; }
+}
+.tag {
+  display: inline-block;
+  font-size: 9px;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+.tag-key { background: #FAEEDA; color: #854F0B; }
+.tag-new { background: #E6F1FB; color: #185FA5; }
+@media (prefers-color-scheme: dark) {
+  .tag-key { background: #412402; color: #FAC775; }
+  .tag-new { background: #042C53; color: #85B7EB; }
+}
+
+.inp-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.inp-row input[type=range] {
+  flex: 1;
+  height: 6px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: var(--border);
+  border-radius: 3px;
+  outline: none;
+}
+.inp-row input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer;
+  border: 2px solid var(--bg-primary);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+.inp-row .val {
+  min-width: 58px;
+  text-align: right;
+  font-size: 14px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--accent);
+}
+.inp-row input[type=number] {
+  width: 80px; height: 32px;
+  font-size: 13px;
+  text-align: right;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  padding: 0 8px;
+  font-family: var(--font);
+}
+.inp-row input[type=number]:focus { outline: 2px solid var(--accent); border-color: transparent; }
+.inp-row .unit { font-size: 12px; color: var(--text-tertiary); min-width: 30px; }
+
+.metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin-bottom: 20px; }
+.mc {
+  background: var(--bg-secondary);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+}
+.mc .ml { font-size: 11px; color: var(--text-secondary); margin-bottom: 4px; }
+.mc .mv { font-size: 22px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.mc .mv.pos { color: var(--success); }
+.mc .mv.neg { color: var(--danger); }
+.mc .mv.warn { color: var(--warning); }
+.mc .msub { font-size: 11px; color: var(--text-tertiary); margin-top: 2px; }
+
+.comp-box {
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 18px 20px;
+  margin-bottom: 16px;
+}
+.comp-title {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.comp-title i { color: var(--accent); }
+.comp-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  font-size: 13px;
+  border-bottom: 1px solid var(--border);
+}
+.comp-row:last-child { border-bottom: none; }
+.comp-row .cr-label { color: var(--text-secondary); }
+.comp-row .cr-val { font-weight: 600; font-variant-numeric: tabular-nums; }
+
+.bar-outer {
+  height: 24px;
+  background: var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+}
+.bar-inner {
+  height: 100%;
+  border-radius: 12px;
+  transition: width 0.4s ease;
+}
+.bar-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+.chart-container {
+  position: relative;
+  width: 100%;
+  height: 280px;
+}
+
+.tooltip-box {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-hover);
+  border-radius: var(--radius);
+  padding: 10px 14px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  max-width: 320px;
+  line-height: 1.6;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+  pointer-events: none;
+}
+
+.sensitivity-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+.sensitivity-table th, .sensitivity-table td {
+  padding: 8px 10px;
+  text-align: center;
+  border: 1px solid var(--border);
+}
+.sensitivity-table th {
+  background: var(--bg-secondary);
+  font-weight: 600;
+  font-size: 12px;
+}
+.sensitivity-table td.pos { background: #EAF3DE; color: #3B6D11; }
+.sensitivity-table td.neg { background: #FCEBEB; color: #A32D2D; }
+.sensitivity-table td.current { outline: 3px solid var(--accent); font-weight: 700; }
+@media (prefers-color-scheme: dark) {
+  .sensitivity-table td.pos { background: #173404; color: #97C459; }
+  .sensitivity-table td.neg { background: #501313; color: #F09595; }
+}
+
+.reset-btn {
+  padding: 8px 16px;
+  font-size: 13px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text-primary);
+  cursor: pointer;
+  font-family: var(--font);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.reset-btn:hover { background: var(--border); }
+
+.collapse-body {
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+  max-height: 600px;
+}
+.collapse-body.collapsed { max-height: 0; }
+
+.flow-diagram {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 12px 0;
+}
+.flow-node {
+  padding: 10px 14px;
+  border-radius: var(--radius);
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+  min-width: 90px;
+}
+.flow-node.emit { background: #FCEBEB; color: #A32D2D; }
+.flow-node.absorb { background: #EAF3DE; color: #3B6D11; }
+.flow-node.neutral { background: var(--bg-secondary); color: var(--text-primary); }
+@media (prefers-color-scheme: dark) {
+  .flow-node.emit { background: #501313; color: #F09595; }
+  .flow-node.absorb { background: #173404; color: #97C459; }
+}
+.flow-arrow { font-size: 18px; color: var(--text-tertiary); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <div>
+      <h1><i class="ti ti-coin"></i> XP Economy Simulation</h1>
+      <div class="subtitle">XP 코인 게임경제 시뮬레이션 대시보드 v4</div>
+    </div>
+    <button class="reset-btn" onclick="resetAll()"><i class="ti ti-refresh"></i> 초기화</button>
+  </div>
+</div>
+
+<div class="container">
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab(0)"><i class="ti ti-adjustments"></i> 변수 입력</button>
+    <button class="tab-btn" onclick="switchTab(1)"><i class="ti ti-chart-bar"></i> 시뮬레이션 결과</button>
+    <button class="tab-btn" onclick="switchTab(2)"><i class="ti ti-scale"></i> 마이닝 vs 복권</button>
+    <button class="tab-btn" onclick="switchTab(3)"><i class="ti ti-table"></i> 민감도 분석</button>
+  </div>
+
+  <!-- TAB 0: 변수 입력 -->
+  <div class="tab-panel active" id="panel0">
+    <div class="grid-2">
+
+      <div class="card">
+        <div class="card-title" onclick="toggleCard(this)">
+          <i class="ti ti-settings"></i> 공통 설정
+          <i class="ti ti-chevron-down toggle-icon"></i>
+        </div>
+        <div class="collapse-body">
+          <div class="inp-grid">
+            <div class="inp-group">
+              <label>XP 코인 시세 <span class="tip-btn" onmouseenter="showTip(event,'현재 XP 코인의 원화 시세입니다. XP 시세가 오르면 매출·매입이 동비율로 증가하므로 순이익률은 거의 불변하지만, NFT·인앱(원화 고정) 매출의 상대 비중이 달라집니다.')">?</span></label>
+              <div class="inp-row"><input type="range" min="5" max="200" step="1" value="40" id="xpPrice" oninput="u()"><span class="val" id="xpPrice_v">40</span><span class="unit">원</span></div>
+            </div>
+            <div class="inp-group">
+              <label>DAU <span class="tip-btn" onmouseenter="showTip(event,'일일 활성 사용자 수. 모든 매출·매입·가스비가 이 수에 비례합니다.')">?</span></label>
+              <div class="inp-row"><input type="range" min="100" max="50000" step="100" value="1000" id="dau" oninput="u()"><span class="val" id="dau_v">1,000</span><span class="unit">명</span></div>
+            </div>
+            <div class="inp-group">
+              <label>월 환산 일수</label>
+              <div class="inp-row"><input type="number" value="30" id="monthDays" onchange="u()"><span class="unit">일</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title" onclick="toggleCard(this)">
+          <i class="ti ti-pickaxe"></i> 마이닝 (XP 배출)
+          <i class="ti ti-chevron-down toggle-icon"></i>
+        </div>
+        <div class="collapse-body">
+          <div class="inp-grid">
+            <div class="inp-group">
+              <label>1인당 게임수/일 <span class="tip-btn" onmouseenter="showTip(event,'유저 1명이 하루에 플레이하는 마이닝 게임 횟수. 에너지 시스템으로 상한이 정해집니다. 정보용 지표입니다.')">?</span></label>
+              <div class="inp-row"><input type="range" min="10" max="500" step="10" value="100" id="mineGames" oninput="u()"><span class="val" id="mineGames_v">100</span><span class="unit">게임</span></div>
+            </div>
+            <div class="inp-group">
+              <label>1인당 적립 XP/일 <span class="tag tag-key">핵심</span> <span class="tip-btn" onmouseenter="showTip(event,'★핵심 레버. 하루 무료 지급 XP. 올리면 유저 만족↑ 그러나 배출비용↑. 복권 하우스마진으로 커버 못하면 적자.')">?</span></label>
+              <div class="inp-row"><input type="range" min="50" max="1000" step="10" value="200" id="mineXP" oninput="u()"><span class="val" id="mineXP_v">200</span><span class="unit">XP</span></div>
+            </div>
+            <div class="inp-group">
+              <label>포인트→XP 전환율 <span class="tag tag-key">핵심</span> <span class="tip-btn" onmouseenter="showTip(event,'★실효 배출 레버. 마이닝 포인트 중 실제 XP로 전환되는 비율. 낮추면 실효 배출↓ → 비용 절감. 미전환분은 이연 부채.')">?</span></label>
+              <div class="inp-row"><input type="range" min="0.1" max="1" step="0.05" value="1" id="convRate" oninput="u()"><span class="val" id="convRate_v">100%</span><span class="unit"></span></div>
+            </div>
+            <div class="inp-group">
+              <label>마이너 매도 비율 <span class="tag tag-new">신규</span> <span class="tip-btn" onmouseenter="showTip(event,'마이닝 XP 중 시장에 매도하는 비율. 높으면 매도압력↑ → XP 시세 하락 위험.')">?</span></label>
+              <div class="inp-row"><input type="range" min="0" max="1" step="0.05" value="0.3" id="sellRatio" oninput="u()"><span class="val" id="sellRatio_v">30%</span><span class="unit"></span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title" onclick="toggleCard(this)">
+          <i class="ti ti-ticket"></i> 복권 / 로터리
+          <i class="ti ti-chevron-down toggle-icon"></i>
+        </div>
+        <div class="collapse-body">
+          <div class="inp-grid">
+            <div class="inp-group">
+              <label>복권 참여율 <span class="tip-btn" onmouseenter="showTip(event,'DAU 중 XP를 구매하여 복권에 참여하는 유저 비율. 핵심 과금 유저층.')">?</span></label>
+              <div class="inp-row"><input type="range" min="0.01" max="0.5" step="0.01" value="0.2" id="lotRate" oninput="u()"><span class="val" id="lotRate_v">20%</span><span class="unit"></span></div>
+            </div>
+            <div class="inp-group">
+              <label>1인당 플레이수/일 <span class="tip-btn" onmouseenter="showTip(event,'복권 참여자 1인의 일일 플레이 횟수(재베팅 포함). handle을 키우지만 실수익은 하우스마진이 결정.')">?</span></label>
+              <div class="inp-row"><input type="range" min="5" max="300" step="5" value="80" id="lotPlays" oninput="u()"><span class="val" id="lotPlays_v">80</span><span class="unit">회</span></div>
+            </div>
+            <div class="inp-group">
+              <label>베팅 XP <span class="tip-btn" onmouseenter="showTip(event,'복권 1회 베팅에 필요한 XP. 높이면 ARPPU↑ 그러나 진입장벽↑.')">?</span></label>
+              <div class="inp-row"><input type="range" min="10" max="500" step="10" value="50" id="betXP" oninput="u()"><span class="val" id="betXP_v">50</span><span class="unit">XP</span></div>
+            </div>
+            <div class="inp-group">
+              <label>환급률 (RTP) <span class="tag tag-key">핵심</span> <span class="tip-btn" onmouseenter="showTip(event,'★수익 핵심 레버. 베팅 대비 당첨 지급 비율. 낮추면 하우스마진↑(수익↑) 그러나 유저 이탈 위험. 모바일 게임 60-80%.')">?</span></label>
+              <div class="inp-row"><input type="range" min="0.3" max="0.95" step="0.01" value="0.7" id="rtp" oninput="u()"><span class="val" id="rtp_v">70%</span><span class="unit"></span></div>
+            </div>
+            <div class="inp-group">
+              <label>무료 XP 사용비율 <span class="tag tag-new">신규</span> <span class="tip-btn" onmouseenter="showTip(event,'마이닝 무료 XP를 복권 베팅에 사용하는 비율. 높으면 내부 순환 증가 → 실매출(신규 구매)↓.')">?</span></label>
+              <div class="inp-row"><input type="range" min="0" max="1" step="0.05" value="0.1" id="freeXPUse" oninput="u()"><span class="val" id="freeXPUse_v">10%</span><span class="unit"></span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title" onclick="toggleCard(this)">
+          <i class="ti ti-car"></i> NFT / 인앱 / 합성
+          <i class="ti ti-chevron-down toggle-icon"></i>
+        </div>
+        <div class="collapse-body">
+          <div class="inp-grid">
+            <div class="inp-group">
+              <label>차량 구매 비율 <span class="tip-btn" onmouseenter="showTip(event,'DAU 중 하루 차량(NFT) 구매 비율. 원화 고정 매출 → XP 시세와 무관한 안정 수익.')">?</span></label>
+              <div class="inp-row"><input type="range" min="0.005" max="0.1" step="0.005" value="0.03" id="nftRate" oninput="u()"><span class="val" id="nftRate_v">3.0%</span><span class="unit"></span></div>
+            </div>
+            <div class="inp-group">
+              <label>차량 구매액 <span class="tip-btn" onmouseenter="showTip(event,'평균 NFT 구매가. BNB 또는 XP로 결제.')">?</span></label>
+              <div class="inp-row"><input type="range" min="5000" max="100000" step="1000" value="30000" id="nftPrice" oninput="u()"><span class="val" id="nftPrice_v">30,000</span><span class="unit">원</span></div>
+            </div>
+            <div class="inp-group">
+              <label>부스트 결제율 <span class="tip-btn" onmouseenter="showTip(event,'에너지·부스트 등 소액 결제 유저 비율.')">?</span></label>
+              <div class="inp-row"><input type="range" min="0.01" max="0.2" step="0.01" value="0.05" id="boostRate" oninput="u()"><span class="val" id="boostRate_v">5%</span><span class="unit"></span></div>
+            </div>
+            <div class="inp-group">
+              <label>부스트 결제액/일 <span class="tip-btn" onmouseenter="showTip(event,'부스트 결제 유저 1인의 일 평균 결제액.')">?</span></label>
+              <div class="inp-row"><input type="range" min="500" max="10000" step="500" value="2000" id="boostAmt" oninput="u()"><span class="val" id="boostAmt_v">2,000</span><span class="unit">원</span></div>
+            </div>
+            <div class="inp-group">
+              <label>합성 유저 비율 <span class="tip-btn" onmouseenter="showTip(event,'DAU 중 차량 합성(Merge) 실행 비율. 수수료 전액 소각 → 공급 감소.')">?</span></label>
+              <div class="inp-row"><input type="range" min="0.01" max="0.15" step="0.005" value="0.04" id="mergeRate" oninput="u()"><span class="val" id="mergeRate_v">4.0%</span><span class="unit"></span></div>
+            </div>
+            <div class="inp-group">
+              <label>합성 수수료 <span class="tip-btn" onmouseenter="showTip(event,'합성 1회 소모 XP. 전액 소각(burn) → 공급 감소, 가치 방어.')">?</span></label>
+              <div class="inp-row"><input type="range" min="10" max="500" step="10" value="100" id="mergeFee" oninput="u()"><span class="val" id="mergeFee_v">100</span><span class="unit">XP</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="grid-column: 1/-1;">
+        <div class="card-title" onclick="toggleCard(this)">
+          <i class="ti ti-gas-station"></i> 가스비 (Paymaster, 프로젝트 부담)
+          <i class="ti ti-chevron-down toggle-icon"></i>
+        </div>
+        <div class="collapse-body">
+          <div class="inp-grid" style="grid-template-columns:repeat(5,1fr)">
+            <div class="inp-group"><label>정산 TX/인·일</label><div class="inp-row"><input type="number" value="1" id="swapTx" onchange="u()"><span class="unit">건</span></div></div>
+            <div class="inp-group"><label>가스 단가</label><div class="inp-row"><input type="number" value="1" id="gasPrice" onchange="u()"><span class="unit">gwei</span></div></div>
+            <div class="inp-group"><label>정산 TX 가스</label><div class="inp-row"><input type="number" value="80000" id="swapGas" onchange="u()"><span class="unit">gas</span></div></div>
+            <div class="inp-group"><label>구매 TX 가스</label><div class="inp-row"><input type="number" value="120000" id="buyGas" onchange="u()"><span class="unit">gas</span></div></div>
+            <div class="inp-group"><label>복권 TX 가스</label><div class="inp-row"><input type="number" value="130000" id="lotGas" onchange="u()"><span class="unit">gas</span></div></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- TAB 1: 시뮬레이션 결과 -->
+  <div class="tab-panel" id="panel1">
+    <div id="resultArea"></div>
+  </div>
+
+  <!-- TAB 2: 마이닝 vs 복권 -->
+  <div class="tab-panel" id="panel2">
+    <div id="compareArea"></div>
+  </div>
+
+  <!-- TAB 3: 민감도 분석 -->
+  <div class="tab-panel" id="panel3">
+    <div id="sensitivityArea"></div>
+  </div>
+</div>
+
+<div id="tipEl" class="tooltip-box"></div>
+
+<script>
+let chart1=null, chart2=null, chart3=null;
+const $=id=>document.getElementById(id);
+const fmt=n=>{if(Math.abs(n)>=1e8)return (n/1e8).toFixed(1)+'억';if(Math.abs(n)>=1e4)return (n/1e4).toFixed(0)+'만';return Math.round(n).toLocaleString()};
+const fmtW=n=>{if(Math.abs(n)>=1e8)return '₩'+(n/1e8).toFixed(2)+'억';if(Math.abs(n)>=1e4)return '₩'+(n/1e4).toFixed(0)+'만';return '₩'+Math.round(n).toLocaleString()};
+const fmtWShort=n=>{if(Math.abs(n)>=1e8)return (n/1e8).toFixed(1)+'억';if(Math.abs(n)>=1e4)return (n/1e4).toFixed(0)+'만';return Math.round(n).toLocaleString()};
+const pct=n=>(n*100).toFixed(1)+'%';
+
+const DEFAULTS={xpPrice:40,dau:1000,monthDays:30,mineGames:100,mineXP:200,convRate:1,sellRatio:0.3,lotRate:0.2,lotPlays:80,betXP:50,rtp:0.7,freeXPUse:0.1,nftRate:0.03,nftPrice:30000,boostRate:0.05,boostAmt:2000,mergeRate:0.04,mergeFee:100,swapTx:1,gasPrice:1,swapGas:80000,buyGas:120000,lotGas:130000};
+
+function resetAll(){
+  Object.entries(DEFAULTS).forEach(([k,v])=>{const el=$(k);if(el){el.value=v;}});
+  u();
+}
+
+function switchTab(i){
+  document.querySelectorAll('.tab-btn').forEach((b,j)=>b.classList.toggle('active',j===i));
+  document.querySelectorAll('.tab-panel').forEach((p,j)=>p.classList.toggle('active',j===i));
+  u();
+}
+
+function toggleCard(el){
+  const body=el.nextElementSibling;
+  const icon=el.querySelector('.toggle-icon');
+  body.classList.toggle('collapsed');
+  icon.style.transform=body.classList.contains('collapsed')?'rotate(-90deg)':'rotate(0)';
+}
+
+function showTip(e,txt){
+  const tip=$('tipEl');
+  tip.textContent=txt;
+  tip.style.display='block';
+  const rect=e.target.getBoundingClientRect();
+  tip.style.left=Math.min(rect.left, window.innerWidth-340)+'px';
+  tip.style.top=(rect.bottom+6)+'px';
+}
+document.addEventListener('mousemove',e=>{
+  if(!e.target.classList.contains('tip-btn')){$('tipEl').style.display='none';}
+});
+
+function calc(){
+  const v={};
+  Object.keys(DEFAULTS).forEach(k=>{v[k]=+($(k).value);});
+  const r={};
+  r.totalMineGames=v.dau*v.mineGames;
+  r.mineXPGross=v.dau*v.mineXP;
+  r.mineXPNet=r.mineXPGross*v.convRate;
+  r.mineCostDay=r.mineXPNet*v.xpPrice;
+  r.lotUsers=v.dau*v.lotRate;
+  r.lotPlaysTotal=r.lotUsers*v.lotPlays;
+  r.totalBetXP=r.lotPlaysTotal*v.betXP;
+  r.betRevenueDay=r.totalBetXP*v.xpPrice;
+  r.nftRevenueDay=v.dau*v.nftRate*v.nftPrice;
+  r.boostRevenueDay=v.dau*v.boostRate*v.boostAmt;
+  r.totalRevenueDay=r.betRevenueDay+r.nftRevenueDay+r.boostRevenueDay;
+  r.totalRevenueMonth=r.totalRevenueDay*v.monthDays;
+  r.lotWinXP=r.totalBetXP*v.rtp;
+  r.lotWinCost=r.lotWinXP*v.xpPrice;
+  r.totalCostDay=r.mineCostDay+r.lotWinCost;
+  r.totalCostMonth=r.totalCostDay*v.monthDays;
+  r.swapTxDay=v.dau*v.swapTx;
+  r.buyTxDay=r.lotUsers;
+  r.lotTxDay=r.lotPlaysTotal;
+  r.totalGasXP=(r.swapTxDay*v.swapGas+r.buyTxDay*v.buyGas+r.lotTxDay*v.lotGas)*v.gasPrice*1e-9;
+  r.gasCostDay=r.totalGasXP*v.xpPrice;
+  r.gasCostMonth=r.gasCostDay*v.monthDays;
+  r.houseMarginDay=r.totalBetXP*(1-v.rtp)*v.xpPrice;
+  r.realRevenueMonth=(r.houseMarginDay+r.nftRevenueDay+r.boostRevenueDay)*v.monthDays;
+  r.netProfitDay=r.totalRevenueDay-r.totalCostDay-r.gasCostDay;
+  r.netProfitMonth=r.netProfitDay*v.monthDays;
+  r.netMargin=r.totalRevenueMonth>0?r.netProfitMonth/r.totalRevenueMonth:0;
+  r.coverage=r.mineCostDay>0?r.houseMarginDay/r.mineCostDay:0;
+  r.emissionRatio=r.totalRevenueMonth>0?(r.mineCostDay*v.monthDays)/r.totalRevenueMonth:0;
+  r.arppuDay=r.lotUsers>0?r.houseMarginDay/r.lotUsers:0;
+  r.arppuMonth=r.arppuDay*v.monthDays;
+  r.handlePerUser=r.lotUsers>0?r.betRevenueDay/r.lotUsers:0;
+  r.burnXPDay=v.dau*v.mergeRate*v.mergeFee;
+  r.burnMonth=r.burnXPDay*v.xpPrice*v.monthDays;
+  r.sellPressureXP=r.mineXPNet*v.sellRatio;
+  r.sellPressureWon=r.sellPressureXP*v.xpPrice;
+  r.mineXPPerUser=v.mineXP*v.convRate;
+  r.lotBetXPPerUser=v.lotPlays*v.betXP;
+  r.freeXPUsed=r.mineXPPerUser*v.freeXPUse;
+  r.paidXPNeeded=Math.max(0,r.lotBetXPPerUser-r.freeXPUsed);
+  r.paidXPCost=r.paidXPNeeded*v.xpPrice;
+  r.freeXPCoverRatio=r.lotBetXPPerUser>0?r.freeXPUsed/r.lotBetXPPerUser:0;
+  r.netXPFlow=r.mineXPNet-r.lotWinXP+r.totalBetXP-r.burnXPDay;
+  r.coreOnlyMonth=(r.houseMarginDay-r.mineCostDay-r.gasCostDay)*v.monthDays;
+  return {v,r};
+}
+
+function u(){
+  const {v,r}=calc();
+  $('xpPrice_v').textContent=Math.round(v.xpPrice).toLocaleString();
+  $('dau_v').textContent=Math.round(v.dau).toLocaleString();
+  $('mineGames_v').textContent=Math.round(v.mineGames).toLocaleString();
+  $('mineXP_v').textContent=Math.round(v.mineXP).toLocaleString();
+  $('convRate_v').textContent=Math.round(v.convRate*100)+'%';
+  $('sellRatio_v').textContent=Math.round(v.sellRatio*100)+'%';
+  $('lotRate_v').textContent=Math.round(v.lotRate*100)+'%';
+  $('lotPlays_v').textContent=Math.round(v.lotPlays).toLocaleString();
+  $('betXP_v').textContent=Math.round(v.betXP).toLocaleString();
+  $('rtp_v').textContent=Math.round(v.rtp*100)+'%';
+  $('freeXPUse_v').textContent=Math.round(v.freeXPUse*100)+'%';
+  $('nftRate_v').textContent=(v.nftRate*100).toFixed(1)+'%';
+  $('nftPrice_v').textContent=Math.round(v.nftPrice).toLocaleString();
+  $('boostRate_v').textContent=Math.round(v.boostRate*100)+'%';
+  $('boostAmt_v').textContent=Math.round(v.boostAmt).toLocaleString();
+  $('mergeRate_v').textContent=(v.mergeRate*100).toFixed(1)+'%';
+  $('mergeFee_v').textContent=Math.round(v.mergeFee).toLocaleString();
+  renderResults(v,r);
+  renderCompare(v,r);
+  renderSensitivity(v,r);
+}
+
+function renderResults(v,r){
+  const profitCls=r.netProfitMonth>=0?'pos':'neg';
+  const covCls=r.coverage>=1?'pos':r.coverage>=0.7?'warn':'neg';
+  $('resultArea').innerHTML=`
+<div class="metrics">
+  <div class="mc"><div class="ml">순손익 / 월</div><div class="mv ${profitCls}">${fmtW(r.netProfitMonth)}</div><div class="msub">일 ${fmtW(r.netProfitDay)}</div></div>
+  <div class="mc"><div class="ml">실질 운영수익 / 월</div><div class="mv">${fmtW(r.realRevenueMonth)}</div><div class="msub">하우스마진+NFT+인앱</div></div>
+  <div class="mc"><div class="ml">총 매출(handle) / 월</div><div class="mv">${fmtW(r.totalRevenueMonth)}</div><div class="msub">재베팅 포함 gross</div></div>
+  <div class="mc"><div class="ml">총 매입 / 월</div><div class="mv">${fmtW(r.totalCostMonth)}</div><div class="msub">가스비 ${fmtW(r.gasCostMonth)}</div></div>
+  <div class="mc"><div class="ml">순이익률</div><div class="mv ${profitCls}">${pct(r.netMargin)}</div><div class="msub">순손익 / 매출</div></div>
+  <div class="mc"><div class="ml">커버리지</div><div class="mv ${covCls}">${r.coverage.toFixed(2)}x</div><div class="msub">${r.coverage>=1?'배출 자력 충당':'배출 미충당'}</div></div>
+  <div class="mc"><div class="ml">배출/매출 비율</div><div class="mv">${pct(r.emissionRatio)}</div><div class="msub">낮을수록 건전</div></div>
+  <div class="mc"><div class="ml">ARPPU / 월</div><div class="mv">${fmtW(r.arppuMonth)}</div><div class="msub">복권 참여자 기준</div></div>
+</div>
+
+<div class="grid-2">
+  <div class="comp-box">
+    <div class="comp-title"><i class="ti ti-list-details"></i> 일별 상세</div>
+    <div class="comp-row"><span class="cr-label">마이닝 게임수/일 (전체)</span><span class="cr-val">${fmt(r.totalMineGames)}게임</span></div>
+    <div class="comp-row"><span class="cr-label">마이닝 배출 XP/일 (실효)</span><span class="cr-val">${fmt(r.mineXPNet)} XP (${fmtW(r.mineCostDay)})</span></div>
+    <div class="comp-row"><span class="cr-label">복권 참여자수</span><span class="cr-val">${fmt(r.lotUsers)}명</span></div>
+    <div class="comp-row"><span class="cr-label">복권 플레이수/일</span><span class="cr-val">${fmt(r.lotPlaysTotal)}회</span></div>
+    <div class="comp-row"><span class="cr-label">총 베팅 XP/일</span><span class="cr-val">${fmt(r.totalBetXP)} XP</span></div>
+    <div class="comp-row"><span class="cr-label">복권 하우스마진/일</span><span class="cr-val">${fmtW(r.houseMarginDay)}</span></div>
+    <div class="comp-row"><span class="cr-label">NFT 매출/일</span><span class="cr-val">${fmtW(r.nftRevenueDay)}</span></div>
+    <div class="comp-row"><span class="cr-label">인앱 매출/일</span><span class="cr-val">${fmtW(r.boostRevenueDay)}</span></div>
+    <div class="comp-row"><span class="cr-label">가스비/일</span><span class="cr-val">${fmtW(r.gasCostDay)}</span></div>
+    <div class="comp-row"><span class="cr-label">매도 압력/일</span><span class="cr-val">${fmt(r.sellPressureXP)} XP (${fmtW(r.sellPressureWon)})</span></div>
+    <div class="comp-row"><span class="cr-label">합성 소각/월</span><span class="cr-val">${fmtW(r.burnMonth)}</span></div>
+    <div class="comp-row"><span class="cr-label">코어(복권+마이닝) 순손익/월</span><span class="cr-val" style="color:${r.coreOnlyMonth>=0?'var(--success)':'var(--danger)'}">${fmtW(r.coreOnlyMonth)}</span></div>
+  </div>
+
+  <div>
+    <div class="comp-box">
+      <div class="comp-title"><i class="ti ti-chart-donut"></i> 실질 매출 구성 (일별)</div>
+      <div class="chart-container"><canvas id="ch1" role="img" aria-label="Revenue breakdown"></canvas></div>
+      <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:8px;font-size:12px;color:var(--text-secondary)">
+        <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:#534AB7"></span>하우스마진 ${fmtW(r.houseMarginDay)}</span>
+        <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:#1D9E75"></span>NFT ${fmtW(r.nftRevenueDay)}</span>
+        <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:#EF9F27"></span>인앱 ${fmtW(r.boostRevenueDay)}</span>
+      </div>
+    </div>
+    <div class="comp-box">
+      <div class="comp-title"><i class="ti ti-chart-bar"></i> 손익 구조 (일별)</div>
+      <div class="chart-container"><canvas id="ch2" role="img" aria-label="P&L breakdown"></canvas></div>
+    </div>
+  </div>
+</div>`;
+
+  if(chart1)chart1.destroy();
+  if(chart2)chart2.destroy();
+  const isDark=matchMedia('(prefers-color-scheme:dark)').matches;
+  const gridColor=isDark?'rgba(255,255,255,0.1)':'rgba(0,0,0,0.06)';
+  const tickColor=isDark?'#a8a29e':'#78716c';
+
+  chart1=new Chart($('ch1'),{type:'doughnut',data:{labels:['하우스마진','NFT','인앱'],datasets:[{data:[r.houseMarginDay,r.nftRevenueDay,r.boostRevenueDay],backgroundColor:['#534AB7','#1D9E75','#EF9F27'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,cutout:'55%',plugins:{legend:{display:false}}}});
+
+  chart2=new Chart($('ch2'),{type:'bar',data:{labels:['하우스마진','NFT','인앱','마이닝배출','복권지급','가스비','순손익'],datasets:[{data:[r.houseMarginDay,r.nftRevenueDay,r.boostRevenueDay,-r.mineCostDay,-r.lotWinCost,-r.gasCostDay,r.netProfitDay],backgroundColor:['#534AB7','#1D9E75','#EF9F27','#E24B4A','#D85A30','#888780',r.netProfitDay>=0?'#639922':'#E24B4A'],borderWidth:0,borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{autoSkip:false,maxRotation:45,font:{size:10},color:tickColor},grid:{display:false}},y:{ticks:{callback:v=>(v<0?'-':'')+'₩'+fmtWShort(Math.abs(v)),color:tickColor},grid:{color:gridColor}}}}});
+}
+
+function renderCompare(v,r){
+  const minePerUser=r.mineXPPerUser;
+  const lotNeedXP=r.lotBetXPPerUser;
+  const freeUsed=r.freeXPUsed;
+  const paidNeed=r.paidXPNeeded;
+  const winBackXP=v.lotPlays*v.betXP*v.rtp;
+  const netLossXP=lotNeedXP-winBackXP;
+  const freeRatio=r.freeXPCoverRatio;
+  const barW=Math.min(freeRatio*100,100);
+  const mineWon=minePerUser*v.xpPrice;
+  const paidWon=paidNeed*v.xpPrice;
+
+  $('compareArea').innerHTML=`
+<div class="grid-2">
+  <div class="comp-box">
+    <div class="comp-title"><i class="ti ti-pickaxe"></i> 1인당 마이닝 현황 (일별)</div>
+    <div class="comp-row"><span class="cr-label">마이닝 게임수</span><span class="cr-val">${v.mineGames}게임</span></div>
+    <div class="comp-row"><span class="cr-label">마이닝 적립 XP (gross)</span><span class="cr-val">${v.mineXP} XP</span></div>
+    <div class="comp-row"><span class="cr-label">실효 전환 XP</span><span class="cr-val">${Math.round(minePerUser)} XP</span></div>
+    <div class="comp-row"><span class="cr-label">원화 가치</span><span class="cr-val">${fmtW(mineWon)}</span></div>
+    <div class="comp-row"><span class="cr-label">XP 1개당 게임수</span><span class="cr-val">${minePerUser>0?(v.mineGames/minePerUser).toFixed(1):'-'}게임</span></div>
+  </div>
+
+  <div class="comp-box">
+    <div class="comp-title"><i class="ti ti-ticket"></i> 1인당 복권 현황 (일별, 참여자 기준)</div>
+    <div class="comp-row"><span class="cr-label">복권 플레이수</span><span class="cr-val">${v.lotPlays}회</span></div>
+    <div class="comp-row"><span class="cr-label">총 베팅 XP</span><span class="cr-val">${fmt(Math.round(lotNeedXP))} XP (${fmtW(lotNeedXP*v.xpPrice)})</span></div>
+    <div class="comp-row"><span class="cr-label">마이닝 무료 XP 사용</span><span class="cr-val">${fmt(Math.round(freeUsed))} XP (${pct(v.freeXPUse)})</span></div>
+    <div class="comp-row" style="font-weight:600"><span class="cr-label">실제 구매 필요 XP</span><span class="cr-val" style="color:var(--danger)">${fmt(Math.round(paidNeed))} XP (${fmtW(paidWon)})</span></div>
+    <div class="comp-row"><span class="cr-label">당첨 환급 XP (RTP)</span><span class="cr-val" style="color:var(--success)">+${fmt(Math.round(winBackXP))} XP</span></div>
+    <div class="comp-row"><span class="cr-label">순 XP 손실</span><span class="cr-val">${fmt(Math.round(netLossXP))} XP (${fmtW(netLossXP*v.xpPrice)})</span></div>
+  </div>
+</div>
+
+<div class="comp-box">
+  <div class="comp-title"><i class="ti ti-scale"></i> 마이닝 XP vs 복권 베팅 비용 비교</div>
+  <p style="font-size:13px;color:var(--text-secondary);margin-bottom:12px">복권 참여자가 마이닝 무료 XP로 복권 베팅의 얼마를 커버할 수 있는가?</p>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:16px">
+    <div class="mc"><div class="ml">마이닝 무료 XP</div><div class="mv">${Math.round(minePerUser)}<span style="font-size:13px"> XP</span></div><div class="msub">${fmtW(mineWon)}</div></div>
+    <div class="mc"><div class="ml">복권 베팅 필요</div><div class="mv">${fmt(Math.round(lotNeedXP))}<span style="font-size:13px"> XP</span></div><div class="msub">${fmtW(lotNeedXP*v.xpPrice)}</div></div>
+    <div class="mc"><div class="ml">배율 (필요/무료)</div><div class="mv warn">${minePerUser>0?(lotNeedXP/minePerUser).toFixed(1):'∞'}x</div><div class="msub">구매 필요 배율</div></div>
+  </div>
+  <div style="margin-bottom:4px;font-size:12px;color:var(--text-secondary)">무료 XP 커버율: <b>${pct(freeRatio)}</b></div>
+  <div class="bar-outer">
+    <div class="bar-inner" style="width:${barW}%;background:${freeRatio>=0.5?'#1D9E75':freeRatio>=0.2?'#EF9F27':'#E24B4A'}"></div>
+  </div>
+  <div class="bar-label"><span>무료 ${fmt(Math.round(freeUsed))} XP</span><span>총 필요 ${fmt(Math.round(lotNeedXP))} XP</span></div>
+  <p style="margin-top:12px;font-size:12px;color:var(--text-secondary);line-height:1.6;padding:10px;background:var(--bg-secondary);border-radius:var(--radius)">
+    ${freeRatio<0.05?'마이닝 XP를 거의 복권에 사용하지 않음 → 베팅 XP 대부분을 별도 구매해야 합니다. 실매출이 높으나 유저 부담도 큽니다.':
+    freeRatio<0.3?'마이닝 XP로 복권의 일부만 커버 → 상당량을 별도 구매해야 합니다. 적절한 균형점입니다.':
+    freeRatio<0.7?'마이닝 XP가 복권의 절반 가까이 커버 → 유저 부담은 줄지만 실매출도 감소합니다.':
+    '마이닝 XP가 복권 대부분을 커버 → 유저 친화적이나 실매출(XP 구매)이 크게 감소합니다. 수익 구조 재검토 필요.'}
+  </p>
+</div>
+
+<div class="comp-box">
+  <div class="comp-title"><i class="ti ti-arrows-exchange"></i> XP 순 유통 흐름 (일별, 전체)</div>
+  <div class="flow-diagram">
+    <div class="flow-node emit">마이닝 배출<br>+${fmt(Math.round(r.mineXPNet))} XP</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-node absorb">복권 베팅<br>-${fmt(Math.round(r.totalBetXP))} XP</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-node emit">복권 환급<br>+${fmt(Math.round(r.lotWinXP))} XP</div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-node absorb">합성 소각<br>-${fmt(Math.round(r.burnXPDay))} XP</div>
+  </div>
+  <div class="comp-row" style="border-top:2px solid var(--border-hover);font-weight:600;margin-top:8px;padding-top:12px">
+    <span class="cr-label">순 유통 변화</span>
+    <span class="cr-val" style="color:${r.netXPFlow>0?'var(--danger)':'var(--success)'}">${r.netXPFlow>0?'+':''}${fmt(Math.round(r.netXPFlow))} XP/일</span>
+  </div>
+  <p style="margin-top:8px;font-size:12px;color:var(--text-secondary)">${r.netXPFlow>0?'유통 증가 = 인플레이션 압력 → 매도압력 증가, 시세 하락 위험':'유통 감소 = 디플레이션 → 시세 방어에 긍정적'}</p>
+</div>`;
+}
+
+function renderSensitivity(v,r){
+  const rtps=[0.5,0.55,0.6,0.65,0.7,0.75,0.8,0.85,0.9];
+  const mines=[50,100,150,200,250,300,400,500];
+  let tableHTML='<table class="sensitivity-table"><thead><tr><th>RTP \\ 마이닝XP</th>';
+  mines.forEach(m=>tableHTML+=`<th>${m}</th>`);
+  tableHTML+='</tr></thead><tbody>';
+  rtps.forEach(rtp=>{
+    tableHTML+='<tr>';
+    tableHTML+=`<th>${(rtp*100).toFixed(0)}%</th>`;
+    mines.forEach(m=>{
+      const hm=v.dau*v.lotRate*v.lotPlays*v.betXP*(1-rtp)*v.xpPrice;
+      const nft=v.dau*v.nftRate*v.nftPrice;
+      const boost=v.dau*v.boostRate*v.boostAmt;
+      const mining=v.dau*m*v.convRate*v.xpPrice;
+      const gas=r.gasCostDay;
+      const net=(hm+nft+boost-mining-gas)*v.monthDays;
+      const isCurrent=Math.abs(rtp-v.rtp)<0.001&&m===v.mineXP;
+      const cls=(net>=0?'pos':'neg')+(isCurrent?' current':'');
+      tableHTML+=`<td class="${cls}">${fmtWShort(net)}</td>`;
+    });
+    tableHTML+='</tr>';
+  });
+  tableHTML+='</tbody></table>';
+
+  $('sensitivityArea').innerHTML=`
+<div class="comp-box">
+  <div class="comp-title"><i class="ti ti-table"></i> 민감도 분석 — 순손익/월 (DAU ${fmt(v.dau)})</div>
+  <p style="font-size:12px;color:var(--text-secondary);margin-bottom:12px">행 = 복권 RTP, 열 = 1인 마이닝 적립 XP/일. 초록 = 흑자, 빨강 = 적자. 굵은 테두리 = 현재 설정.</p>
+  <div style="overflow-x:auto">${tableHTML}</div>
+</div>
+
+<div class="grid-2" style="margin-top:16px">
+  <div class="comp-box">
+    <div class="comp-title"><i class="ti ti-chart-line"></i> RTP별 순손익 (마이닝 ${v.mineXP} XP 고정)</div>
+    <div class="chart-container"><canvas id="ch3" role="img" aria-label="Sensitivity chart by RTP"></canvas></div>
+  </div>
+  <div class="comp-box">
+    <div class="comp-title"><i class="ti ti-alert-triangle"></i> 손익분기 조건</div>
+    <div style="padding:12px 0">
+      ${(()=>{
+        const breakRTP=r.totalBetXP>0?1-(r.mineCostDay+r.gasCostDay-r.nftRevenueDay-r.boostRevenueDay)/(r.totalBetXP*v.xpPrice):0;
+        const breakMine=(r.houseMarginDay+r.nftRevenueDay+r.boostRevenueDay-r.gasCostDay)/(v.dau*v.convRate*v.xpPrice);
+        return `
+        <div class="comp-row"><span class="cr-label">손익분기 RTP (현재 마이닝 기준)</span><span class="cr-val" style="color:var(--warning)">${breakRTP>0&&breakRTP<1?pct(breakRTP):'N/A'}</span></div>
+        <div class="comp-row"><span class="cr-label">손익분기 마이닝 XP (현재 RTP 기준)</span><span class="cr-val" style="color:var(--warning)">${breakMine>0?Math.round(breakMine)+' XP':'N/A'}</span></div>
+        <div class="comp-row"><span class="cr-label">현재 마진 여유</span><span class="cr-val" style="color:${r.netProfitDay>=0?'var(--success)':'var(--danger)'}">일 ${fmtW(r.netProfitDay)}</span></div>
+        <p style="margin-top:12px;font-size:12px;color:var(--text-secondary);line-height:1.6">
+          RTP를 ${breakRTP>0&&breakRTP<1?pct(breakRTP):'계산불가'} 이상으로 올리거나,
+          마이닝 XP를 ${breakMine>0?Math.round(breakMine)+'XP':'계산불가'} 이상으로 올리면 적자 전환됩니다.
+        </p>`;
+      })()}
+    </div>
+  </div>
+</div>`;
+
+  if(chart3)chart3.destroy();
+  const isDark=matchMedia('(prefers-color-scheme:dark)').matches;
+  const rtpLabels=rtps.map(r=>(r*100)+'%');
+  const profitData=rtps.map(rtp=>{
+    const hm=v.dau*v.lotRate*v.lotPlays*v.betXP*(1-rtp)*v.xpPrice;
+    return (hm+r.nftRevenueDay+r.boostRevenueDay-r.mineCostDay-r.gasCostDay)*v.monthDays;
+  });
+  chart3=new Chart($('ch3'),{type:'line',data:{labels:rtpLabels,datasets:[{label:'순손익/월',data:profitData,borderColor:'#534AB7',backgroundColor:'rgba(83,74,183,0.1)',fill:true,tension:0.3,pointRadius:4,pointBackgroundColor:profitData.map(d=>d>=0?'#639922':'#E24B4A')}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{title:{display:true,text:'RTP',color:isDark?'#a8a29e':'#78716c'},ticks:{color:isDark?'#a8a29e':'#78716c'},grid:{display:false}},y:{title:{display:true,text:'순손익/월',color:isDark?'#a8a29e':'#78716c'},ticks:{callback:v=>(v<0?'-':'')+'₩'+fmtWShort(Math.abs(v)),color:isDark?'#a8a29e':'#78716c'},grid:{color:isDark?'rgba(255,255,255,0.06)':'rgba(0,0,0,0.06)'}}}}});
+}
+
+u();
+</script>
+</body>
+</html>
