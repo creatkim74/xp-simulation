@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Users/iotgr/AppData/Roaming/Claude/local-agent-mode-sessions/skills-plugin/d390f6ab-3d9a-41d5-b24f-a30dde573f23/769065b2-67b7-4ac0-a543-1155470798f6/skills/xlsx/**)",
+      "Bash(pip install *)",
+      "Bash(python -c ' *)",
+      "mcp__visualize__read_me",
+      "mcp__visualize__show_widget"
+    ]
+  }
+}
