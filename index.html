@@ -190,43 +190,21 @@ body {
   align-items: center;
   gap: 8px;
 }
-.inp-row input[type=range] {
-  flex: 1;
-  height: 6px;
-  -webkit-appearance: none;
-  appearance: none;
-  background: var(--border);
-  border-radius: 3px;
-  outline: none;
-}
-.inp-row input[type=range]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  width: 18px; height: 18px;
-  border-radius: 50%;
-  background: var(--accent);
-  cursor: pointer;
-  border: 2px solid var(--bg-primary);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-}
-.inp-row .val {
-  min-width: 58px;
-  text-align: right;
+.inp-row input[type=number] {
+  width: 110px; height: 36px;
   font-size: 14px;
   font-weight: 600;
-  font-variant-numeric: tabular-nums;
-  color: var(--accent);
-}
-.inp-row input[type=number] {
-  width: 80px; height: 32px;
-  font-size: 13px;
   text-align: right;
   border: 1px solid var(--border);
   border-radius: var(--radius);
   background: var(--bg-primary);
-  color: var(--text-primary);
-  padding: 0 8px;
+  color: var(--accent);
+  padding: 0 10px;
   font-family: var(--font);
+  font-variant-numeric: tabular-nums;
+  transition: border-color 0.2s;
 }
+.inp-row input[type=number]:hover { border-color: var(--border-hover); }
 .inp-row input[type=number]:focus { outline: 2px solid var(--accent); border-color: transparent; }
 .inp-row .unit { font-size: 12px; color: var(--text-tertiary); min-width: 30px; }
 
@@ -419,15 +397,15 @@ body {
           <div class="inp-grid">
             <div class="inp-group">
               <label>XP 코인 시세 <span class="tip-btn" onmouseenter="showTip(event,'현재 XP 코인의 원화 시세입니다. XP 시세가 오르면 매출·매입이 동비율로 증가하므로 순이익률은 거의 불변하지만, NFT·인앱(원화 고정) 매출의 상대 비중이 달라집니다.')">?</span></label>
-              <div class="inp-row"><input type="range" min="5" max="200" step="1" value="40" id="xpPrice" oninput="u()"><span class="val" id="xpPrice_v">40</span><span class="unit">원</span></div>
+              <div class="inp-row"><input type="number" min="1" step="1" value="40" id="xpPrice" oninput="u()"><span class="unit">원/XP</span></div>
             </div>
             <div class="inp-group">
               <label>DAU <span class="tip-btn" onmouseenter="showTip(event,'일일 활성 사용자 수. 모든 매출·매입·가스비가 이 수에 비례합니다.')">?</span></label>
-              <div class="inp-row"><input type="range" min="100" max="50000" step="100" value="1000" id="dau" oninput="u()"><span class="val" id="dau_v">1,000</span><span class="unit">명</span></div>
+              <div class="inp-row"><input type="number" min="1" step="100" value="1000" id="dau" oninput="u()"><span class="unit">명</span></div>
             </div>
             <div class="inp-group">
               <label>월 환산 일수</label>
-              <div class="inp-row"><input type="number" value="30" id="monthDays" onchange="u()"><span class="unit">일</span></div>
+              <div class="inp-row"><input type="number" min="1" step="1" value="30" id="monthDays" oninput="u()"><span class="unit">일</span></div>
             </div>
           </div>
         </div>
@@ -442,19 +420,19 @@ body {
           <div class="inp-grid">
             <div class="inp-group">
               <label>1인당 게임수/일 <span class="tip-btn" onmouseenter="showTip(event,'유저 1명이 하루에 플레이하는 마이닝 게임 횟수. 에너지 시스템으로 상한이 정해집니다. 정보용 지표입니다.')">?</span></label>
-              <div class="inp-row"><input type="range" min="10" max="500" step="10" value="100" id="mineGames" oninput="u()"><span class="val" id="mineGames_v">100</span><span class="unit">게임</span></div>
+              <div class="inp-row"><input type="number" min="1" step="10" value="100" id="mineGames" oninput="u()"><span class="unit">게임</span></div>
             </div>
             <div class="inp-group">
               <label>1인당 적립 XP/일 <span class="tag tag-key">핵심</span> <span class="tip-btn" onmouseenter="showTip(event,'★핵심 레버. 하루 무료 지급 XP. 올리면 유저 만족↑ 그러나 배출비용↑. 복권 하우스마진으로 커버 못하면 적자.')">?</span></label>
-              <div class="inp-row"><input type="range" min="50" max="1000" step="10" value="200" id="mineXP" oninput="u()"><span class="val" id="mineXP_v">200</span><span class="unit">XP</span></div>
+              <div class="inp-row"><input type="number" min="1" step="10" value="200" id="mineXP" oninput="u()"><span class="unit">XP</span></div>
             </div>
             <div class="inp-group">
               <label>포인트→XP 전환율 <span class="tag tag-key">핵심</span> <span class="tip-btn" onmouseenter="showTip(event,'★실효 배출 레버. 마이닝 포인트 중 실제 XP로 전환되는 비율. 낮추면 실효 배출↓ → 비용 절감. 미전환분은 이연 부채.')">?</span></label>
-              <div class="inp-row"><input type="range" min="0.1" max="1" step="0.05" value="1" id="convRate" oninput="u()"><span class="val" id="convRate_v">100%</span><span class="unit"></span></div>
+              <div class="inp-row"><input type="number" min="1" max="100" step="5" value="100" id="convRate" oninput="u()"><span class="unit">%</span></div>
             </div>
             <div class="inp-group">
               <label>마이너 매도 비율 <span class="tag tag-new">신규</span> <span class="tip-btn" onmouseenter="showTip(event,'마이닝 XP 중 시장에 매도하는 비율. 높으면 매도압력↑ → XP 시세 하락 위험.')">?</span></label>
-              <div class="inp-row"><input type="range" min="0" max="1" step="0.05" value="0.3" id="sellRatio" oninput="u()"><span class="val" id="sellRatio_v">30%</span><span class="unit"></span></div>
+              <div class="inp-row"><input type="number" min="0" max="100" step="5" value="30" id="sellRatio" oninput="u()"><span class="unit">%</span></div>
             </div>
           </div>
         </div>
@@ -469,23 +447,23 @@ body {
           <div class="inp-grid">
             <div class="inp-group">
               <label>복권 참여율 <span class="tip-btn" onmouseenter="showTip(event,'DAU 중 XP를 구매하여 복권에 참여하는 유저 비율. 핵심 과금 유저층.')">?</span></label>
-              <div class="inp-row"><input type="range" min="0.01" max="0.5" step="0.01" value="0.2" id="lotRate" oninput="u()"><span class="val" id="lotRate_v">20%</span><span class="unit"></span></div>
+              <div class="inp-row"><input type="number" min="1" max="100" step="1" value="20" id="lotRate" oninput="u()"><span class="unit">%</span></div>
             </div>
             <div class="inp-group">
               <label>1인당 플레이수/일 <span class="tip-btn" onmouseenter="showTip(event,'복권 참여자 1인의 일일 플레이 횟수(재베팅 포함). handle을 키우지만 실수익은 하우스마진이 결정.')">?</span></label>
-              <div class="inp-row"><input type="range" min="5" max="300" step="5" value="80" id="lotPlays" oninput="u()"><span class="val" id="lotPlays_v">80</span><span class="unit">회</span></div>
+              <div class="inp-row"><input type="number" min="1" step="5" value="80" id="lotPlays" oninput="u()"><span class="unit">회</span></div>
             </div>
             <div class="inp-group">
               <label>베팅 XP <span class="tip-btn" onmouseenter="showTip(event,'복권 1회 베팅에 필요한 XP. 높이면 ARPPU↑ 그러나 진입장벽↑.')">?</span></label>
-              <div class="inp-row"><input type="range" min="10" max="500" step="10" value="50" id="betXP" oninput="u()"><span class="val" id="betXP_v">50</span><span class="unit">XP</span></div>
+              <div class="inp-row"><input type="number" min="1" step="10" value="50" id="betXP" oninput="u()"><span class="unit">XP</span></div>
             </div>
             <div class="inp-group">
               <label>환급률 (RTP) <span class="tag tag-key">핵심</span> <span class="tip-btn" onmouseenter="showTip(event,'★수익 핵심 레버. 베팅 대비 당첨 지급 비율. 낮추면 하우스마진↑(수익↑) 그러나 유저 이탈 위험. 모바일 게임 60-80%.')">?</span></label>
-              <div class="inp-row"><input type="range" min="0.3" max="0.95" step="0.01" value="0.7" id="rtp" oninput="u()"><span class="val" id="rtp_v">70%</span><span class="unit"></span></div>
+              <div class="inp-row"><input type="number" min="1" max="99" step="1" value="70" id="rtp" oninput="u()"><span class="unit">%</span></div>
             </div>
             <div class="inp-group">
               <label>무료 XP 사용비율 <span class="tag tag-new">신규</span> <span class="tip-btn" onmouseenter="showTip(event,'마이닝 무료 XP를 복권 베팅에 사용하는 비율. 높으면 내부 순환 증가 → 실매출(신규 구매)↓.')">?</span></label>
-              <div class="inp-row"><input type="range" min="0" max="1" step="0.05" value="0.1" id="freeXPUse" oninput="u()"><span class="val" id="freeXPUse_v">10%</span><span class="unit"></span></div>
+              <div class="inp-row"><input type="number" min="0" max="100" step="5" value="10" id="freeXPUse" oninput="u()"><span class="unit">%</span></div>
             </div>
           </div>
         </div>
@@ -500,27 +478,27 @@ body {
           <div class="inp-grid">
             <div class="inp-group">
               <label>차량 구매 비율 <span class="tip-btn" onmouseenter="showTip(event,'DAU 중 하루 차량(NFT) 구매 비율. 원화 고정 매출 → XP 시세와 무관한 안정 수익.')">?</span></label>
-              <div class="inp-row"><input type="range" min="0.005" max="0.1" step="0.005" value="0.03" id="nftRate" oninput="u()"><span class="val" id="nftRate_v">3.0%</span><span class="unit"></span></div>
+              <div class="inp-row"><input type="number" min="0.1" max="100" step="0.5" value="3" id="nftRate" oninput="u()"><span class="unit">%</span></div>
             </div>
             <div class="inp-group">
               <label>차량 구매액 <span class="tip-btn" onmouseenter="showTip(event,'평균 NFT 구매가. BNB 또는 XP로 결제.')">?</span></label>
-              <div class="inp-row"><input type="range" min="5000" max="100000" step="1000" value="30000" id="nftPrice" oninput="u()"><span class="val" id="nftPrice_v">30,000</span><span class="unit">원</span></div>
+              <div class="inp-row"><input type="number" min="1000" step="1000" value="30000" id="nftPrice" oninput="u()"><span class="unit">원</span></div>
             </div>
             <div class="inp-group">
               <label>부스트 결제율 <span class="tip-btn" onmouseenter="showTip(event,'에너지·부스트 등 소액 결제 유저 비율.')">?</span></label>
-              <div class="inp-row"><input type="range" min="0.01" max="0.2" step="0.01" value="0.05" id="boostRate" oninput="u()"><span class="val" id="boostRate_v">5%</span><span class="unit"></span></div>
+              <div class="inp-row"><input type="number" min="1" max="100" step="1" value="5" id="boostRate" oninput="u()"><span class="unit">%</span></div>
             </div>
             <div class="inp-group">
               <label>부스트 결제액/일 <span class="tip-btn" onmouseenter="showTip(event,'부스트 결제 유저 1인의 일 평균 결제액.')">?</span></label>
-              <div class="inp-row"><input type="range" min="500" max="10000" step="500" value="2000" id="boostAmt" oninput="u()"><span class="val" id="boostAmt_v">2,000</span><span class="unit">원</span></div>
+              <div class="inp-row"><input type="number" min="100" step="500" value="2000" id="boostAmt" oninput="u()"><span class="unit">원</span></div>
             </div>
             <div class="inp-group">
               <label>합성 유저 비율 <span class="tip-btn" onmouseenter="showTip(event,'DAU 중 차량 합성(Merge) 실행 비율. 수수료 전액 소각 → 공급 감소.')">?</span></label>
-              <div class="inp-row"><input type="range" min="0.01" max="0.15" step="0.005" value="0.04" id="mergeRate" oninput="u()"><span class="val" id="mergeRate_v">4.0%</span><span class="unit"></span></div>
+              <div class="inp-row"><input type="number" min="0.5" max="100" step="0.5" value="4" id="mergeRate" oninput="u()"><span class="unit">%</span></div>
             </div>
             <div class="inp-group">
               <label>합성 수수료 <span class="tip-btn" onmouseenter="showTip(event,'합성 1회 소모 XP. 전액 소각(burn) → 공급 감소, 가치 방어.')">?</span></label>
-              <div class="inp-row"><input type="range" min="10" max="500" step="10" value="100" id="mergeFee" oninput="u()"><span class="val" id="mergeFee_v">100</span><span class="unit">XP</span></div>
+              <div class="inp-row"><input type="number" min="1" step="10" value="100" id="mergeFee" oninput="u()"><span class="unit">XP</span></div>
             </div>
           </div>
         </div>
@@ -533,11 +511,11 @@ body {
         </div>
         <div class="collapse-body">
           <div class="inp-grid" style="grid-template-columns:repeat(5,1fr)">
-            <div class="inp-group"><label>정산 TX/인·일</label><div class="inp-row"><input type="number" value="1" id="swapTx" onchange="u()"><span class="unit">건</span></div></div>
-            <div class="inp-group"><label>가스 단가</label><div class="inp-row"><input type="number" value="1" id="gasPrice" onchange="u()"><span class="unit">gwei</span></div></div>
-            <div class="inp-group"><label>정산 TX 가스</label><div class="inp-row"><input type="number" value="80000" id="swapGas" onchange="u()"><span class="unit">gas</span></div></div>
-            <div class="inp-group"><label>구매 TX 가스</label><div class="inp-row"><input type="number" value="120000" id="buyGas" onchange="u()"><span class="unit">gas</span></div></div>
-            <div class="inp-group"><label>복권 TX 가스</label><div class="inp-row"><input type="number" value="130000" id="lotGas" onchange="u()"><span class="unit">gas</span></div></div>
+            <div class="inp-group"><label>정산 TX/인·일</label><div class="inp-row"><input type="number" min="0" step="1" value="1" id="swapTx" oninput="u()"><span class="unit">건</span></div></div>
+            <div class="inp-group"><label>가스 단가</label><div class="inp-row"><input type="number" min="0" step="1" value="1" id="gasPrice" oninput="u()"><span class="unit">gwei</span></div></div>
+            <div class="inp-group"><label>정산 TX 가스</label><div class="inp-row"><input type="number" min="0" step="10000" value="80000" id="swapGas" oninput="u()"><span class="unit">gas</span></div></div>
+            <div class="inp-group"><label>구매 TX 가스</label><div class="inp-row"><input type="number" min="0" step="10000" value="120000" id="buyGas" oninput="u()"><span class="unit">gas</span></div></div>
+            <div class="inp-group"><label>복권 TX 가스</label><div class="inp-row"><input type="number" min="0" step="10000" value="130000" id="lotGas" oninput="u()"><span class="unit">gas</span></div></div>
           </div>
         </div>
       </div>
@@ -571,7 +549,9 @@ const fmtW=n=>{if(Math.abs(n)>=1e8)return '₩'+(n/1e8).toFixed(2)+'억';if(Math
 const fmtWShort=n=>{if(Math.abs(n)>=1e8)return (n/1e8).toFixed(1)+'억';if(Math.abs(n)>=1e4)return (n/1e4).toFixed(0)+'만';return Math.round(n).toLocaleString()};
 const pct=n=>(n*100).toFixed(1)+'%';
 
-const DEFAULTS={xpPrice:40,dau:1000,monthDays:30,mineGames:100,mineXP:200,convRate:1,sellRatio:0.3,lotRate:0.2,lotPlays:80,betXP:50,rtp:0.7,freeXPUse:0.1,nftRate:0.03,nftPrice:30000,boostRate:0.05,boostAmt:2000,mergeRate:0.04,mergeFee:100,swapTx:1,gasPrice:1,swapGas:80000,buyGas:120000,lotGas:130000};
+const DEFAULTS={xpPrice:40,dau:1000,monthDays:30,mineGames:100,mineXP:200,convRate:100,sellRatio:30,lotRate:20,lotPlays:80,betXP:50,rtp:70,freeXPUse:10,nftRate:3,nftPrice:30000,boostRate:5,boostAmt:2000,mergeRate:4,mergeFee:100,swapTx:1,gasPrice:1,swapGas:80000,buyGas:120000,lotGas:130000};
+
+const PCT_FIELDS=['convRate','sellRatio','lotRate','rtp','freeXPUse','nftRate','boostRate','mergeRate'];
 
 function resetAll(){
   Object.entries(DEFAULTS).forEach(([k,v])=>{const el=$(k);if(el){el.value=v;}});
@@ -603,9 +583,21 @@ document.addEventListener('mousemove',e=>{
   if(!e.target.classList.contains('tip-btn')){$('tipEl').style.display='none';}
 });
 
+function getVal(id){
+  const raw=+($(id).value);
+  if(PCT_FIELDS.includes(id)) return raw/100;
+  return raw;
+}
+
 function calc(){
-  const v={};
-  Object.keys(DEFAULTS).forEach(k=>{v[k]=+($(k).value);});
+  const v={
+    xpPrice:getVal('xpPrice'), dau:getVal('dau'), monthDays:getVal('monthDays'),
+    mineGames:getVal('mineGames'), mineXP:getVal('mineXP'), convRate:getVal('convRate'), sellRatio:getVal('sellRatio'),
+    lotRate:getVal('lotRate'), lotPlays:getVal('lotPlays'), betXP:getVal('betXP'), rtp:getVal('rtp'), freeXPUse:getVal('freeXPUse'),
+    nftRate:getVal('nftRate'), nftPrice:getVal('nftPrice'), boostRate:getVal('boostRate'), boostAmt:getVal('boostAmt'),
+    mergeRate:getVal('mergeRate'), mergeFee:getVal('mergeFee'),
+    swapTx:getVal('swapTx'), gasPrice:getVal('gasPrice'), swapGas:getVal('swapGas'), buyGas:getVal('buyGas'), lotGas:getVal('lotGas')
+  };
   const r={};
   r.totalMineGames=v.dau*v.mineGames;
   r.mineXPGross=v.dau*v.mineXP;
@@ -656,23 +648,6 @@ function calc(){
 
 function u(){
   const {v,r}=calc();
-  $('xpPrice_v').textContent=Math.round(v.xpPrice).toLocaleString();
-  $('dau_v').textContent=Math.round(v.dau).toLocaleString();
-  $('mineGames_v').textContent=Math.round(v.mineGames).toLocaleString();
-  $('mineXP_v').textContent=Math.round(v.mineXP).toLocaleString();
-  $('convRate_v').textContent=Math.round(v.convRate*100)+'%';
-  $('sellRatio_v').textContent=Math.round(v.sellRatio*100)+'%';
-  $('lotRate_v').textContent=Math.round(v.lotRate*100)+'%';
-  $('lotPlays_v').textContent=Math.round(v.lotPlays).toLocaleString();
-  $('betXP_v').textContent=Math.round(v.betXP).toLocaleString();
-  $('rtp_v').textContent=Math.round(v.rtp*100)+'%';
-  $('freeXPUse_v').textContent=Math.round(v.freeXPUse*100)+'%';
-  $('nftRate_v').textContent=(v.nftRate*100).toFixed(1)+'%';
-  $('nftPrice_v').textContent=Math.round(v.nftPrice).toLocaleString();
-  $('boostRate_v').textContent=Math.round(v.boostRate*100)+'%';
-  $('boostAmt_v').textContent=Math.round(v.boostAmt).toLocaleString();
-  $('mergeRate_v').textContent=(v.mergeRate*100).toFixed(1)+'%';
-  $('mergeFee_v').textContent=Math.round(v.mergeFee).toLocaleString();
   renderResults(v,r);
   renderCompare(v,r);
   renderSensitivity(v,r);
