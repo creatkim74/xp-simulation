@@ -95,25 +95,25 @@ body{font-family:var(--f);background:var(--bg3);color:var(--tx);line-height:1.6;
 
 <div class="cd"><div class="ct" onclick="tg(this)"><i class="ti ti-car"></i> 무료 포인트 마이닝<i class="ti ti-chevron-down tg"></i></div>
 <div class="cb"><div class="ig">
-<div class="fg"><label>1인당 일일 포인트 적립 상한 <span class="tag tag-k">핵심</span> <span class="tip" onmouseenter="tt(event,'1계정이 하루에 무료로 적립할 수 있는 최대 포인트 수. 게임은 무제한이지만 포인트 적립은 이 상한으로 제한됩니다. XP 배출량을 결정하는 핵심 레버.')">?</span></label><div class="ir"><input type="number" min="1" step="100" value="5000" id="freeCapPt" oninput="u()"><span class="u">PT</span></div></div>
-<div class="fg"><label>랩(바퀴)당 적립 포인트 <span class="tip" onmouseenter="tt(event,'차량이 1바퀴 레이싱할 때 적립되는 포인트. 차량 등급·속도 아이템에 따라 달라질 수 있습니다.')">?</span></label><div class="ir"><input type="number" min="1" step="1" value="10" id="ptPerLap" oninput="u()"><span class="u">PT/랩</span><span class="calc" id="maxLaps_v"></span></div></div>
-<div class="fg"><label>차량 구매 비용 (포인트) <span class="tip" onmouseenter="tt(event,'인게임에서 차량을 포인트로 구매하는 비용. 포인트 소비처(싱크)로 작용합니다.')">?</span></label><div class="ir"><input type="number" min="0" step="100" value="2000" id="carCostPt" oninput="u()"><span class="u">PT</span></div></div>
-<div class="fg"><label>차량 합성 비용 (포인트) <span class="tip" onmouseenter="tt(event,'차량 합성(Merge) 시 소모되는 포인트. 포인트 싱크 역할.')">?</span></label><div class="ir"><input type="number" min="0" step="100" value="1000" id="mergeCostPt" oninput="u()"><span class="u">PT</span></div></div>
+<div class="fg"><label>1인당 일일 포인트 적립 상한 <span class="tag tag-k">핵심</span> <span class="tip" onmouseenter="tt(event,'1계정이 하루에 무료로 적립할 수 있는 최대 포인트 수. 게임은 무제한이지만 포인트 적립은 이 상한으로 제한됩니다. XP 배출량을 결정하는 핵심 레버.')">?</span></label><div class="ir"><input type="number" min="1" step="100" value="200" id="freeCapPt" oninput="u()"><span class="u">PT</span></div></div>
+<div class="fg"><label>랩(바퀴)당 적립 포인트 <span class="tip" onmouseenter="tt(event,'차량이 1바퀴 레이싱할 때 적립되는 포인트. 차량 등급·속도 아이템에 따라 달라질 수 있습니다.')">?</span></label><div class="ir"><input type="number" min="1" step="1" value="5" id="ptPerLap" oninput="u()"><span class="u">PT/랩</span><span class="calc" id="maxLaps_v"></span></div></div>
+<div class="fg"><label>차량 구매 비용 (포인트) <span class="tip" onmouseenter="tt(event,'인게임에서 차량을 포인트로 구매하는 비용. 포인트 소비처(싱크)로 작용합니다.')">?</span></label><div class="ir"><input type="number" min="0" step="100" value="1000" id="carCostPt" oninput="u()"><span class="u">PT</span></div></div>
+<div class="fg"><label>차량 합성 비용 (포인트) <span class="tip" onmouseenter="tt(event,'차량 합성(Merge) 시 소모되는 포인트. 포인트 싱크 역할.')">?</span></label><div class="ir"><input type="number" min="0" step="100" value="800" id="mergeCostPt" oninput="u()"><span class="u">PT</span></div></div>
 <div class="fg"><label>속도 아이템 비용 (포인트) <span class="tip" onmouseenter="tt(event,'속도 부스트 아이템 1개 구매 시 포인트 비용.')">?</span></label><div class="ir"><input type="number" min="0" step="50" value="500" id="itemCostPt" oninput="u()"><span class="u">PT</span></div></div>
-<div class="fg"><label>인게임 포인트 소비율 <span class="tip" onmouseenter="tt(event,'적립 포인트 중 인게임(차 구매·합성·아이템)에 소비하는 평균 비율. 나머지가 XP 스왑 대상.')">?</span></label><div class="ir"><input type="number" min="0" max="100" step="5" value="30" id="inGameSpend" oninput="u()"><span class="u">%</span></div></div>
+<div class="fg"><label>인게임 포인트 소비율 <span class="tip" onmouseenter="tt(event,'적립 포인트 중 인게임(차 구매·합성·아이템)에 소비하는 평균 비율. 나머지가 XP 스왑 대상.')">?</span></label><div class="ir"><input type="number" min="0" max="100" step="5" value="70" id="inGameSpend" oninput="u()"><span class="u">%</span></div></div>
 </div></div></div>
 
 <div class="cd"><div class="ct" onclick="tg(this)"><i class="ti ti-transfer-in"></i> 유료 마이닝 (XP 투입)<i class="ti ti-chevron-down tg"></i></div>
 <div class="cb"><div class="ig">
-<div class="fg"><label>XP 투입 마이닝 유저 비율 <span class="tip" onmouseenter="tt(event,'DAU 중 XP 코인을 게임 지갑에 넣어 유료 마이닝하는 유저 비율. XP를 투입하면 더 많은 포인트를 적립할 수 있습니다.')">?</span></label><div class="ir"><input type="number" min="0" max="100" step="1" value="10" id="paidRate" oninput="u()"><span class="u">%</span></div></div>
-<div class="fg"><label>1인당 일일 XP 투입량 <span class="tip" onmouseenter="tt(event,'유료 마이닝 유저가 하루에 투입하는 XP 수량. 투입 XP는 소모됩니다(프로젝트 수입).')">?</span></label><div class="ir"><input type="number" min="1" step="10" value="100" id="paidXPDay" oninput="u()"><span class="u">XP</span></div></div>
+<div class="fg"><label>XP 투입 마이닝 유저 비율 <span class="tip" onmouseenter="tt(event,'DAU 중 XP 코인을 게임 지갑에 넣어 유료 마이닝하는 유저 비율. XP를 투입하면 더 많은 포인트를 적립할 수 있습니다.')">?</span></label><div class="ir"><input type="number" min="0" max="100" step="1" value="15" id="paidRate" oninput="u()"><span class="u">%</span></div></div>
+<div class="fg"><label>1인당 일일 XP 투입량 <span class="tip" onmouseenter="tt(event,'유료 마이닝 유저가 하루에 투입하는 XP 수량. 투입 XP는 소모됩니다(프로젝트 수입).')">?</span></label><div class="ir"><input type="number" min="1" step="10" value="200" id="paidXPDay" oninput="u()"><span class="u">XP</span></div></div>
 <div class="fg"><label>XP 투입 시 포인트 배율 <span class="tip" onmouseenter="tt(event,'XP를 투입하면 기본 적립 대비 몇 배의 포인트를 추가로 적립하는지. 2.0x면 무료분+추가 100% = 총 2배.')">?</span></label><div class="ir"><input type="number" min="1" max="10" step="0.5" value="2" id="paidMulti" oninput="u()"><span class="u">x배</span></div></div>
-<div class="fg"><label>유료 유저 일일 포인트 상한 <span class="tip" onmouseenter="tt(event,'유료 마이닝 유저의 일일 포인트 적립 상한. 무료 상한 × 배율이 기본이지만, 별도 상한을 설정할 수 있습니다.')">?</span></label><div class="ir"><input type="number" min="1" step="1000" value="10000" id="paidCapPt" oninput="u()"><span class="u">PT</span></div></div>
+<div class="fg"><label>유료 유저 일일 포인트 상한 <span class="tip" onmouseenter="tt(event,'유료 마이닝 유저의 일일 포인트 적립 상한. 무료 상한 × 배율이 기본이지만, 별도 상한을 설정할 수 있습니다.')">?</span></label><div class="ir"><input type="number" min="1" step="1000" value="400" id="paidCapPt" oninput="u()"><span class="u">PT</span></div></div>
 </div></div></div>
 
 <div class="cd"><div class="ct" onclick="tg(this)"><i class="ti ti-trophy"></i> 프로모션 / 랭킹 보상<i class="ti ti-chevron-down tg"></i></div>
 <div class="cb"><div class="ig">
-<div class="fg"><label>일일 프로모션 포인트 예산 <span class="tag tag-k">핵심</span> <span class="tip" onmouseenter="tt(event,'프로모션/이벤트로 하루 총 지급하는 포인트 예산. 랭킹 상위 유저에게 배분됩니다. 추가 포인트 배출이므로 XP 스왑 시 비용 증가 요인.')">?</span></label><div class="ir"><input type="number" min="0" step="10000" value="100000" id="promoBudget" oninput="u()"><span class="u">PT/일</span></div></div>
+<div class="fg"><label>일일 프로모션 포인트 예산 <span class="tag tag-k">핵심</span> <span class="tip" onmouseenter="tt(event,'프로모션/이벤트로 하루 총 지급하는 포인트 예산. 랭킹 상위 유저에게 배분됩니다. 추가 포인트 배출이므로 XP 스왑 시 비용 증가 요인.')">?</span></label><div class="ir"><input type="number" min="0" step="10000" value="20000" id="promoBudget" oninput="u()"><span class="u">PT/일</span></div></div>
 <div class="fg"><label>프로모션 수혜 유저 비율 <span class="tip" onmouseenter="tt(event,'DAU 중 랭킹 보상을 받는 유저 비율. 상위 N% 유저에게 집중 배분.')">?</span></label><div class="ir"><input type="number" min="1" max="100" step="1" value="20" id="promoRate" oninput="u()"><span class="u">%</span></div></div>
 <div class="fg"><label>보상 유저의 XP 스왑율 <span class="tip" onmouseenter="tt(event,'프로모션 포인트를 받은 유저가 해당 포인트를 XP로 스왑하는 비율. 높을수록 XP 배출 증가.')">?</span></label><div class="ir"><input type="number" min="0" max="100" step="5" value="50" id="promoSwapRate" oninput="u()"><span class="u">%</span></div></div>
 </div>
@@ -122,15 +122,15 @@ body{font-family:var(--f);background:var(--bg3);color:var(--tx);line-height:1.6;
 
 <div class="cd"><div class="ct" onclick="tg(this)"><i class="ti ti-ticket"></i> 복권 게임 (XP 사용, 별도)<i class="ti ti-chevron-down tg"></i></div>
 <div class="cb"><div class="ig">
-<div class="fg"><label>복권 참여율 <span class="tip" onmouseenter="tt(event,'DAU 중 XP를 사용하여 복권에 참여하는 비율. 마이닝과 별개의 게임.')">?</span></label><div class="ir"><input type="number" min="0" max="100" step="1" value="15" id="lotRate" oninput="u()"><span class="u">%</span></div></div>
-<div class="fg"><label>1인당 플레이수/일 <span class="tip" onmouseenter="tt(event,'복권 참여자 1인의 일일 플레이 횟수(재베팅 포함).')">?</span></label><div class="ir"><input type="number" min="1" step="5" value="50" id="lotPlays" oninput="u()"><span class="u">회</span></div></div>
-<div class="fg"><label>베팅 XP <span class="tip" onmouseenter="tt(event,'복권 1회 베팅에 필요한 XP. XP를 구매하거나 마이닝 스왑으로 얻은 XP를 사용.')">?</span></label><div class="ir"><input type="number" min="1" step="10" value="50" id="betXP" oninput="u()"><span class="u">XP</span></div></div>
-<div class="fg"><label>환급률 (RTP) <span class="tag tag-k">핵심</span> <span class="tip" onmouseenter="tt(event,'★수익 핵심 레버. 베팅 대비 당첨 지급 비율. 하우스마진 = 1-RTP.')">?</span></label><div class="ir"><input type="number" min="1" max="99" step="1" value="70" id="rtp" oninput="u()"><span class="u">%</span></div></div>
+<div class="fg"><label>복권 참여율 <span class="tip" onmouseenter="tt(event,'DAU 중 XP를 사용하여 복권에 참여하는 비율. 마이닝과 별개의 게임.')">?</span></label><div class="ir"><input type="number" min="0" max="100" step="1" value="35" id="lotRate" oninput="u()"><span class="u">%</span></div></div>
+<div class="fg"><label>1인당 플레이수/일 <span class="tip" onmouseenter="tt(event,'복권 참여자 1인의 일일 플레이 횟수(재베팅 포함).')">?</span></label><div class="ir"><input type="number" min="1" step="5" value="30" id="lotPlays" oninput="u()"><span class="u">회</span></div></div>
+<div class="fg"><label>베팅 XP <span class="tip" onmouseenter="tt(event,'복권 1회 베팅에 필요한 XP. XP를 구매하거나 마이닝 스왑으로 얻은 XP를 사용.')">?</span></label><div class="ir"><input type="number" min="1" step="10" value="30" id="betXP" oninput="u()"><span class="u">XP</span></div></div>
+<div class="fg"><label>환급률 (RTP) <span class="tag tag-k">핵심</span> <span class="tip" onmouseenter="tt(event,'★수익 핵심 레버. 베팅 대비 당첨 지급 비율. 하우스마진 = 1-RTP.')">?</span></label><div class="ir"><input type="number" min="1" max="99" step="1" value="95" id="rtp" oninput="u()"><span class="u">%</span></div></div>
 </div></div></div>
 
 <div class="cd"><div class="ct" onclick="tg(this)"><i class="ti ti-car"></i> NFT·인앱·합성<i class="ti ti-chevron-down tg"></i></div>
 <div class="cb"><div class="ig">
-<div class="fg"><label>차량 NFT 구매율 (DAU 중)</label><div class="ir"><input type="number" min="0" max="100" step="0.5" value="3" id="nftRate" oninput="u()"><span class="u">%</span></div></div>
+<div class="fg"><label>차량 NFT 구매율 (DAU 중)</label><div class="ir"><input type="number" min="0" max="100" step="0.5" value="2" id="nftRate" oninput="u()"><span class="u">%</span></div></div>
 <div class="fg"><label>차량 NFT 가격</label><div class="ir"><input type="number" min="0" step="1000" value="30000" id="nftPrice" oninput="u()"><span class="u">원</span></div></div>
 <div class="fg"><label>인앱 결제율</label><div class="ir"><input type="number" min="0" max="100" step="1" value="5" id="boostRate" oninput="u()"><span class="u">%</span></div></div>
 <div class="fg"><label>인앱 결제액/일</label><div class="ir"><input type="number" min="0" step="500" value="2000" id="boostAmt" oninput="u()"><span class="u">원</span></div></div>
@@ -169,7 +169,7 @@ const fW=n=>{if(Math.abs(n)>=1e8)return'₩'+(n/1e8).toFixed(2)+'억';if(Math.ab
 const fS=n=>{if(Math.abs(n)>=1e8)return(n/1e8).toFixed(1)+'억';if(Math.abs(n)>=1e4)return(n/1e4).toFixed(0)+'만';return Math.round(n).toLocaleString()};
 const pc=n=>(n*100).toFixed(1)+'%';
 
-const D={xpPrice:40,xpBase:30,dau:1000,md:30,freeCapPt:5000,ptPerLap:10,carCostPt:2000,mergeCostPt:1000,itemCostPt:500,inGameSpend:30,paidRate:10,paidXPDay:100,paidMulti:2,paidCapPt:10000,promoBudget:100000,promoRate:20,promoSwapRate:50,lotRate:15,lotPlays:50,betXP:50,rtp:70,nftRate:3,nftPrice:30000,boostRate:5,boostAmt:2000,mergeFeeXP:100,mergeRateXP:4,swapTx:1,gasPrice:1,swapGas:80000,buyGas:120000,lotGas:130000};
+const D={xpPrice:40,xpBase:30,dau:1000,md:30,freeCapPt:200,ptPerLap:5,carCostPt:1000,mergeCostPt:800,itemCostPt:500,inGameSpend:70,paidRate:15,paidXPDay:200,paidMulti:2,paidCapPt:400,promoBudget:20000,promoRate:20,promoSwapRate:50,lotRate:35,lotPlays:30,betXP:30,rtp:95,nftRate:2,nftPrice:30000,boostRate:5,boostAmt:2000,mergeFeeXP:100,mergeRateXP:4,swapTx:1,gasPrice:1,swapGas:80000,buyGas:120000,lotGas:130000};
 const PCT=['inGameSpend','paidRate','promoRate','promoSwapRate','lotRate','rtp','nftRate','boostRate','mergeRateXP'];
 
 function resetAll(){Object.entries(D).forEach(([k,v])=>{const e=$(k);if(e)e.value=v});u()}
